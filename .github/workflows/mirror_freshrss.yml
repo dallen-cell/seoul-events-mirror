@@ -1,4 +1,4 @@
-name: Mirror FreshRSS to events.xml
+name: Mirror FreshRSS to events.xml1
 
 on:
   schedule:
