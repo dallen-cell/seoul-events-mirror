@@ -1,0 +1,30 @@
+name: Mirror FreshRSS to events.xml
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # every 30 minutes
+  workflow_dispatch:         # allow manual run
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Fetch FreshRSS feed
+        run: |
+          curl -s "$FEED_URL" -o events.xml
+        env:
+          FEED_URL: ${{ secrets.FEED_URL }}
+
+      - name: Commit changes if any
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add events.xml
+          git diff --quiet && echo "No changes" || git commit -m "Update events feed"
+      - name: Push changes
+        run: |
+          git push
